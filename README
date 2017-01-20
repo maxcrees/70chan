@@ -1,0 +1,7 @@
+* To add a board:
+  ./newboard.sh 'boardname'
+
+* To change hostname, change:
+  config.ini $server.host
+  /etc/xinet.d/mgod
+  httpgate.cfg.h

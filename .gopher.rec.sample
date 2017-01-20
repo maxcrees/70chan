@@ -1,0 +1,6 @@
+# Boards
+!dirproc-raw	b	./board.py
+!dirproc-raw	t	./board.py
+# Actions
+!dirproc-raw	post	./post.py
+!dirproc-raw	del	./del.py

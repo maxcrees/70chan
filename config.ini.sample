@@ -1,0 +1,53 @@
+[server]
+; Gopher server domain name
+;host = localhost
+
+; Gopher port
+;port = 70
+
+[file]
+; Path to database file
+;db = database.sqlite3
+
+; Path to lock file: if this path exists, the BBS will be unavailable
+;lock = lock
+
+; If you changed the name of .gopher in mgod's settings, you must also change
+; it here (and move .gopher.rec.sample accordingly)
+;gopher = .gopher
+
+[path]
+; Selector for board access: e.g. if there is a board named "example", the
+; selector to view it would be 1/$path.board/example
+;board = /
+
+; Selector for posting; e.g. to post you would send a search to
+; 7/$path.post/example[/thread]
+;post = /post/
+
+; Selector for deleting posts; e.g. to delete a post you would send a search to
+; 7/$path.del/example/thread
+;del = /del/
+
+; Selector for the uploads directory
+;upload = /upload/
+
+[board]
+; Number of threads to show on each page of a board index
+;showThreads = 10
+
+; Show the last $board.showReplies of each thread in the board index
+;showReplies = 3
+
+; Show the first $board.showTextLines of each post's body in the board index
+;showTextLines = 3
+
+; If set to "yes", selectors for individual threads will prefer human-readable
+; words as opposed to thread IDs, e.g. 1/$path.board/example/thread/threadword
+; instead of 1/$path.board/example/thread/12345
+;preferThreadWords = yes
+
+[post]
+; Prevent posting for $post.throttle seconds after the last post on the current
+; board
+;throttle = 120
