@@ -37,7 +37,7 @@ if __name__ == '__main__':
     if not ip:
         userError('An IP address is required to delete a post')
 
-    pattern = re.escape(config['path']['del'][1:]) + r'([a-z])/?([a-z0-9]+)?'
+    pattern = re.escape(config['path']['del'][1:]) + r'([a-z0-9]+)/?([a-z0-9]+)?'
     queryfinder = re.compile(pattern)
     try: query = re.match(queryfinder, environ['QUERY'])
     except KeyError:

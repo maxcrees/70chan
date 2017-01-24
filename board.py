@@ -131,7 +131,7 @@ def showBoard(cursor, board, env):
     else:
         skip = env['skip']
 
-    cursor.execute('SELECT threads FROM boards WHERE name = ?', (board))
+    cursor.execute('SELECT threads FROM boards WHERE name = ?', (board,))
     try: totalThreads = cursor.fetchone()[0]
     except TypeError:
         critError('Board not found')
@@ -175,7 +175,7 @@ if __name__ == '__main__':
     getBBSlock()
 
     # Extract board name and predicate
-    queryfinder = re.compile(r'([a-z])/?([a-z0-9]+)?/?([a-z0-9]+)?')
+    queryfinder = re.compile(r'([a-z0-9]+)/?([a-z0-9]+)?/?([a-z0-9]+)?')
     try: query = re.match(queryfinder, environ['QUERY'])
     except KeyError:
         #print(repr(environ))

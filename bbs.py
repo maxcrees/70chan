@@ -93,7 +93,7 @@ def getPostNumber(cursor, board):
     """Get latest post number from given board or raise error"""
     cursor.execute("""
 SELECT posts FROM boards
-WHERE name = ?""", (board))
+WHERE name = ?""", (board,))
 
     result = cursor.fetchone()
     if not result:

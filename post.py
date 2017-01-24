@@ -29,7 +29,7 @@ VALUES (?, ?, ?, ?, ?)
 def getBoardThrottling(cursor, board):
     """Check if post throttling needs to be applied"""
     # Using UTC
-    cursor.execute('SELECT ts FROM boards WHERE name = ?', (board))
+    cursor.execute('SELECT ts FROM boards WHERE name = ?', (board,))
     try: ts = cursor.fetchone()[0]
     except TypeError:
         critError('Board not found')
@@ -45,7 +45,7 @@ def getBoardThrottling(cursor, board):
 if __name__ == '__main__':
     getBBSlock()
 
-    pattern = re.escape(config['path']['post'][1:]) + r'([a-z])/?([a-z0-9]+)?'
+    pattern = re.escape(config['path']['post'][1:]) + r'([a-z0-9]+)/?([a-z0-9]+)?'
     queryfinder = re.compile(pattern)
     try: query = re.match(queryfinder, environ['QUERY'])
     except KeyError:
