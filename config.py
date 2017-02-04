@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 from configparser import ConfigParser
-from os import environ, getcwd
+from os import environ, getcwd, chdir
 from os.path import isfile, join as path_join
 from sys import argv, exit
+
+chdir('/srv/gopher/70chan')
 
 # Setup config
 configDefaults = {
@@ -11,11 +13,11 @@ configDefaults = {
         'port': 70
     },
     'file': {
-        'db': 'database.sqlite3',
-        'lock': 'lock',
+        'db': 'data/database.sqlite3',
+        'lock': 'data/lock',
         'gopher': '.gopher',
         'wordlist': '/usr/share/dict/words',
-        'words': 'words'
+        'words': 'data/words'
     },
     'path': {
         'board': '/',
@@ -35,7 +37,7 @@ configDefaults = {
 }
 config = ConfigParser()
 config.read_dict(configDefaults)
-config.read(path_join(getcwd(), 'config.ini'))
+config.read(path_join(getcwd(), 'data/config.ini'))
 
 # Path resolution
 for f, path in config['file'].items():

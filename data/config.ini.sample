@@ -7,11 +7,12 @@
 
 [file]
 ; Path to database file
-;db = database.sqlite3
+;db = data/database.sqlite3
 
 ; Path to lock file: if this path exists, the BBS will be unavailable
-;lock = lock
+;lock = data/lock
 
+; Path to gophermap - ".rec" is added to the end
 ; If you changed the name of .gopher in mgod's settings, you must also change
 ; it here (and move .gopher.rec.sample accordingly)
 ;gopher = .gopher
@@ -21,7 +22,7 @@
 
 ; Path to used-up word files. ".$board" will be appended. e.g. the default setting
 ; will check the "words.$board" file in the CWD
-;words = words
+;words = data/words
 
 [path]
 ; Selector for board access: e.g. if there is a board named "example", the

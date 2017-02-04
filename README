@@ -11,4 +11,4 @@ This is a (WIP) rewrite of port70.net's gopherchan[1] in Python 3.
   /etc/xinet.d/mgod
   httpgate.cfg.h
 
-* config.ini must be in the same directory as .gopher.rec
+* Change chdir() in config.py to absolute path of 70chan's folder

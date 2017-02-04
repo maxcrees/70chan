@@ -1,11 +1,12 @@
 * CLI client + corresponding HTTP endpoint (for image uploads)
-* Implement bans
 * Setup script
   * permissions.sh - config owner and group?
   * create new SQLite DB from schema.sql
+  * edit config.py chdir()
 * Configurable allowed file type extensions
 * OP deletion
 
 Far future:
 * Admin from browser??
 * Support query strings as well as default slashes
+* "User was banned for this post"

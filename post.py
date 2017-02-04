@@ -82,6 +82,17 @@ def getBoardThrottling(cursor, board):
     if remaining > 0:
         userError('No posts will be accepted to this board for {} more seconds'.format(remaining))
 
+def checkBans(cursor, board, ip):
+    """Check if poster is banned before proceeding"""
+    cursor.execute('SELECT board, reason FROM bans WHERE ip = ?', (ip,))
+    bans = cursor.fetchall()
+
+    for ban in bans:
+        if ban['board'] == board:
+            userError('You are banned from posting to this board: {}'.format(ban['reason']))
+        elif not ban['board']:
+            userError('You are banned from posting to all boards: {}'.format(ban['reason']))
+
 if __name__ == '__main__':
     getBBSlock()
 
@@ -101,6 +112,8 @@ if __name__ == '__main__':
 
     db, cursor = connDB()
     getBoardThrottling(cursor, board)
+    if ip:
+        checkBans(cursor, board, ip)
 
     thread = query.group(2)
     if thread:
