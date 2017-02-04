@@ -221,6 +221,8 @@ if __name__ == '__main__':
 
     else:
         write('~~~ Showing one board... ~~~')
+        selector = path_join(config['path']['post'], board)
+        write('Create a new thread', selector, '7')
         write('Return to BBS home', config['path']['board'], '1')
         write('')
         showBoard(cursor, board, env)

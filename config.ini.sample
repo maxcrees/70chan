@@ -16,6 +16,13 @@
 ; it here (and move .gopher.rec.sample accordingly)
 ;gopher = .gopher
 
+; Path to a master wordlist to cherry pick new thread words from
+;wordlist = /usr/share/dict/words
+
+; Path to used-up word files. ".$board" will be appended. e.g. the default setting
+; will check the "words.$board" file in the CWD
+;words = words
+
 [path]
 ; Selector for board access: e.g. if there is a board named "example", the
 ; selector to view it would be 1/$path.board/example

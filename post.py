@@ -1,30 +1,70 @@
 #!/usr/bin/env python3
 from datetime import datetime
 from os import environ
+from subprocess import PIPE, run
 
 from config import *
 from bbs import *
 
+def getNewThreadWord(cursor, board):
+    result = run(['./threadword.sh', board], stdout=PIPE)
+    word = result.stdout.decode()
+
+    if result.returncode == 1:
+        if word.startswith('!'):
+            critError(word[2:])
+    else:
+        if word:
+            word = word.strip()
+            return word
+
+    critError('Unknown error encountered while trying to generate new thread word')
+
+def eliminateThreadWord(board, word):
+    with open(config['file']['words'] + '.' + board, 'a') as words:
+        words.write(word + '\n')
+
 def newPost(db, cursor, board, thread, ip, text):
-   """Create a new post"""
-   text = sanitize(text)
-   if not text:
-       userError('Rejecting empty post')
-   text = '\n'.join(textwrap(text))
-   id = getPostNumber(cursor, board) + 1
-   cursor.execute("""
+    """Create a new post"""
+    text = sanitize(text)
+    if not text:
+        userError('Rejecting empty post')
+    text = '\n'.join(textwrap(text))
+
+    id = getPostNumber(cursor, board) + 1
+
+    if type(thread) == int:
+        threadID = thread
+    else:
+        threadID = thread['id']
+
+    if threadID == 0:
+        tword = getNewThreadWord(cursor, board)
+        cursor.execute("""
+INSERT INTO posts (board, thread, tdate, tword, id, ip, text)
+VALUES (?, 0, CURRENT_TIMESTAMP, ?, ?, ?, ?)
+        """, (board, tword, id, ip, text))
+    else:
+        cursor.execute("""
 INSERT INTO posts (board, thread, id, ip, text)
 VALUES (?, ?, ?, ?, ?)
-""", (board, thread['id'], id, ip, text))
-   db.commit()
+        """, (board, threadID, id, ip, text))
 
-   getPostInfo(cursor, board, id)
-   write('Posted #{} to /{}/'.format(id, board), ftype='3')
-   write('')
-   selector = getThreadLink(board, thread)
-   write('Return to thread', selector, ftype='1')
-   selector = path_join(config['path']['board'], board)
-   write('Return to board index', selector, ftype='1')
+    db.commit()
+
+    # Check if successful
+    if threadID == 0:
+        thread = getThreadInfo(cursor, board, id)
+        eliminateThreadWord(board, tword)
+    else:
+        getPostInfo(cursor, board, id)
+
+    write('Posted #{} to /{}/'.format(id, board), ftype='3')
+    write('')
+    selector = getThreadLink(board, thread)
+    write('Return to thread', selector, ftype='1')
+    selector = path_join(config['path']['board'], board)
+    write('Return to board index', selector, ftype='1')
 
 def getBoardThrottling(cursor, board):
     """Check if post throttling needs to be applied"""
@@ -60,8 +100,9 @@ if __name__ == '__main__':
     ip = getIP(environ)
 
     db, cursor = connDB()
-    thread = query.group(2)
     getBoardThrottling(cursor, board)
+
+    thread = query.group(2)
     if thread:
         try:
             thread = int(thread)
@@ -69,7 +110,8 @@ if __name__ == '__main__':
         except: pass
         thread = getThreadInfo(cursor, board, thread)
         newPost(db, cursor, board, thread, ip, text)
-    # TODO: support OPs
-    #else:
-    #    newPost(cursor, board, 0, text)
+
+    else:
+        newPost(db, cursor, board, 0, ip, text)
+
     db.close()

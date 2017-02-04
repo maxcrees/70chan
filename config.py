@@ -13,7 +13,9 @@ configDefaults = {
     'file': {
         'db': 'database.sqlite3',
         'lock': 'lock',
-        'gopher': '.gopher'
+        'gopher': '.gopher',
+        'wordlist': '/usr/share/dict/words',
+        'words': 'words'
     },
     'path': {
         'board': '/',
@@ -35,10 +37,14 @@ config = ConfigParser()
 config.read_dict(configDefaults)
 config.read(path_join(getcwd(), 'config.ini'))
 # Path resolution
-if not config['file']['lock'].startswith('/'):
-    config['file']['lock'] = path_join(getcwd(), config['file']['lock'])
 if not config['file']['db'].startswith('/'):
     config['file']['db'] = path_join(getcwd(), config['file']['db'])
+if not config['file']['lock'].startswith('/'):
+    config['file']['lock'] = path_join(getcwd(), config['file']['lock'])
+if not config['file']['wordlist'].startswith('/'):
+    config['file']['wordlist'] = path_join(getcwd(), config['file']['wordlist'])
+if not config['file']['words'].startswith('/'):
+    config['file']['words'] = path_join(getcwd(), config['file']['words'])
 # Type assertions
 try: config.getboolean('board', 'preferThreadWords')
 except ValueError:
