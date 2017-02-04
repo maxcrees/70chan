@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from os.path import isfile as os_isfile, join as path_join
+from os.path import isfile, join as path_join
 import re
 import sqlite3
 from sys import exit
@@ -51,7 +51,7 @@ def critError(tag):
 
 def connDB():
     """Return sqlite connection and cursor objects"""
-    if not os_isfile(config['file']['db']):
+    if not isfile(config['file']['db']):
        critError('Database not found')
 
     db = sqlite3.connect(config['file']['db'])
@@ -103,7 +103,7 @@ WHERE name = ?""", (board,))
 
 def getBBSlock():
     """Check if the lockfile exists raise error if it does"""
-    if os_isfile(config['file']['lock']):
+    if isfile(config['file']['lock']):
         critError('BBS is offline')
 
 def getThreadLink(board, thread):

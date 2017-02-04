@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from configparser import ConfigParser
 from os import environ, getcwd
-from os.path import isfile as os_isfile, join as path_join
+from os.path import isfile, join as path_join
 from sys import argv, exit
 
 # Setup config
@@ -36,15 +36,17 @@ configDefaults = {
 config = ConfigParser()
 config.read_dict(configDefaults)
 config.read(path_join(getcwd(), 'config.ini'))
+
 # Path resolution
-if not config['file']['db'].startswith('/'):
-    config['file']['db'] = path_join(getcwd(), config['file']['db'])
-if not config['file']['lock'].startswith('/'):
-    config['file']['lock'] = path_join(getcwd(), config['file']['lock'])
-if not config['file']['wordlist'].startswith('/'):
-    config['file']['wordlist'] = path_join(getcwd(), config['file']['wordlist'])
-if not config['file']['words'].startswith('/'):
-    config['file']['words'] = path_join(getcwd(), config['file']['words'])
+for f, path in config['file'].items():
+    if not path.startswith('/'):
+        config['file'][f] = path_join(getcwd(), config['file'][f])
+        path = config['file'][f]
+
+    if f != 'words' and f != 'lock' and not isfile(path):
+        print('3*** configuration error: "{}" does not exist ***\tfake\t(NULL)\t0'.format(path))
+        exit(255)
+
 # Type assertions
 try: config.getboolean('board', 'preferThreadWords')
 except ValueError:
@@ -64,4 +66,4 @@ if __name__ == '__main__' and 'REQUEST' not in environ:
        try: print(config[argv[1]][argv[2]])
        except KeyError:
            print('Unknown configuration option')
-           exit(255)
+           exit(1)
