@@ -19,6 +19,9 @@ if [ ! -f "$db" ]; then
 fi
 
 echo -e "!dirproc-raw\t$name\t$root/board.py" >> "$gopher"
+# TODO: XXX
+# This is currently susceptible to SQL injection (I think), which isn't *too* bad
+# considering this bit isn't web-facing, but it could cause cryptic errors...
 if [ -z "$description" ]; then
   sqlite3 "$db" "INSERT INTO boards (name) VALUES ('$name')"
 else

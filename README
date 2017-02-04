@@ -3,12 +3,16 @@ This is a (WIP) rewrite of port70.net's gopherchan[1] in Python 3.
 [1] gopher://port70.net/1chan
     http://port70.net/?1chan
 
+* To setup:
+  # Edit data/config.ini.sample and move to data/config.ini
+  ./scripts/setup.sh
+* When running in conjunction with mgod and httpgate, I recommend using
+  the user mgod runs under as the owner, and the user the HTTP server (and
+  thus httpgate) runs under as the group.
 * To add a board:
-  ./newboard.sh 'boardname'
-
-* To change hostname, change:
-  config.ini $server.host
+  ./newboard.sh 'boardname' 'description'
+  # then chown and chmod data/words.$boardname as appropriate
+* To change hostname, modify:
+  data/config.ini $server.host
   /etc/xinet.d/mgod
   httpgate.cfg.h
-
-* Change chdir() in config.py to absolute path of 70chan's folder
