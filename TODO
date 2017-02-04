@@ -1,4 +1,10 @@
-* CLI client
+* CLI client + corresponding HTTP endpoint (for image uploads)
+* Implement bans
+* Setup script
+  * permissions.sh - config owner and group?
+  * create new SQLite DB from schema.sql
+* Configurable allowed file type extensions
+* OP deletion
 
 Far future:
 * Admin from browser??
