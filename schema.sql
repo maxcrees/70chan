@@ -35,7 +35,7 @@ CREATE TABLE "bans" (
 -- Triggers --------------------------------------------------------------------
 
 -- Prevent creation of posts in boards that do not exist
-CREATE TRIGGER check_board_name AFTER INSERT ON posts
+CREATE TRIGGER check_board_name BEFORE INSERT ON posts
 WHEN NOT EXISTS(SELECT name FROM boards WHERE name = NEW.board)
 BEGIN
   SELECT RAISE(ROLLBACK, 'That board does not exist!');
@@ -43,6 +43,12 @@ END;
 -- Prevent creation of posts with non-unique IDs
 CREATE TRIGGER check_post_id BEFORE INSERT ON posts
 WHEN EXISTS(SELECT id FROM posts WHERE id = NEW.id AND board = NEW.board)
+BEGIN
+  SELECT RAISE(ROLLBACK, 'That post already exists!');
+END;
+-- Prevent creation of posts with non-unique thread words
+CREATE TRIGGER check_post_word BEFORE INSERT ON posts
+WHEN EXISTS(SELECT tword FROM posts WHERE tword = NEW.tword AND board = NEW.board)
 BEGIN
   SELECT RAISE(ROLLBACK, 'That post already exists!');
 END;
