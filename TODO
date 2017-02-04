@@ -1,8 +1,4 @@
 * CLI client + corresponding HTTP endpoint (for image uploads)
-* Setup script
-  * permissions.sh - config owner and group?
-  * create new SQLite DB from schema.sql
-  * edit config.py chdir()
 * Configurable allowed file type extensions
 * OP deletion
 

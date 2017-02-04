@@ -7,7 +7,7 @@ from config import *
 from bbs import *
 
 def getNewThreadWord(cursor, board):
-    result = run(['./threadword.sh', board], stdout=PIPE)
+    result = run(['./scripts/threadword.sh', board], stdout=PIPE)
     word = result.stdout.decode()
 
     if result.returncode == 1:

@@ -25,6 +25,8 @@
 ;words = data/words
 
 [path]
+; These settings must be kept in sync with your gophermap or nothing will work
+
 ; Selector for board access: e.g. if there is a board named "example", the
 ; selector to view it would be 1/$path.board/example
 ;board = /

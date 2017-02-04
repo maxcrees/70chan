@@ -25,7 +25,7 @@ CREATE TABLE "posts" (
   `deleted` INTEGER NOT NULL DEFAULT 0,               -- if deleted == 1, hide this post's content from users
   `imageext`  TEXT,                                   -- image filename extension (leave blank if no image attached)
   `imagename` TEXT                                    -- original image filename from poster's computer (leave blank if no image)
-)
+);
 -- Bans table
 CREATE TABLE "bans" (
   `board` TEXT,                                       -- (optional) limit ban to specific board

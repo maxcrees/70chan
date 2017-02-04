@@ -4,7 +4,12 @@ from os import environ, getcwd, chdir
 from os.path import isfile, join as path_join
 from sys import argv, exit
 
-chdir('/srv/gopher/70chan')
+try: root = '/srv/gopher/70chan'
+except NameError:
+    print('3*** configuration error: you must run scripts/setup.sh first! ***\tfake\t(NULL)\t0')
+    exit(255)
+
+chdir(root)
 
 # Setup config
 configDefaults = {
@@ -45,9 +50,11 @@ for f, path in config['file'].items():
         config['file'][f] = path_join(getcwd(), config['file'][f])
         path = config['file'][f]
 
-    if f != 'words' and f != 'lock' and not isfile(path):
+    if f != 'words' and f != 'lock' and not isfile(path) and len(argv) < 4:
         print('3*** configuration error: "{}" does not exist ***\tfake\t(NULL)\t0'.format(path))
         exit(255)
+
+config['file']['root'] = root
 
 # Type assertions
 try: config.getboolean('board', 'preferThreadWords')
