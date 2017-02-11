@@ -16,7 +16,7 @@ def delPost(db, cursor, board, id, ip, password):
     write('Deleted post #{}'.format(id), ftype='3')
 
     # Delete thread if OP and all replies are deleted
-    thread = selection['thread']
+    thread = selection['thread'] or id
     cursor.execute('SELECT COUNT(*) FROM posts WHERE BOARD = ? AND (id = ? OR thread = ?) AND deleted = 0', (board, thread, thread))
     try:
         replies = cursor.fetchone()[0]
@@ -25,8 +25,9 @@ def delPost(db, cursor, board, id, ip, password):
             db.commit()
     except: pass
 
-    thread = getThreadInfo(cursor, board, thread)
-    try: write('Return to thread', getThreadLink(board, thread), '1')
+    try:
+        thread = getThreadInfo(cursor, board, thread)
+        write('Return to thread', getThreadLink(board, thread), '1')
     except SystemExit: pass
     write('Return to board index', path_join(config['path']['board'], board), '1')
 
