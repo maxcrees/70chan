@@ -57,6 +57,12 @@
 ; instead of 1/$path.board/example/thread/12345
 ;preferThreadWords = yes
 
+; Delete the oldest (# threads in board - $board.prune) > 0 threads
+; This should probably be a multiple of $board.showThreads if you want
+; exactly $board.prune / $board.showThreads pages
+; Set to 0 to retain all threads indefinitely
+;prune = 50
+
 [post]
 ; Prevent posting for $post.throttle seconds after the last post on the current
 ; board

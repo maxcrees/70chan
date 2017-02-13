@@ -6,6 +6,27 @@ from subprocess import PIPE, run
 from config import *
 from bbs import *
 
+def pruneBoard(db, cursor, board):
+    # XXX images will also need to be deleted
+
+    cursor.execute('SELECT COUNT(*) FROM posts WHERE board = ? AND thread = 0 AND deleted = 0', (board,));
+    try: activeThreads = cursor.fetchone()[0]
+    except TypeError:
+        critError('Board not found')
+
+    deathRow = activeThreads - config.getint('board', 'prune')
+    print(repr(deathRow))
+    if deathRow > 0:
+        # delete OPs on death row
+        cursor.execute("""
+DELETE FROM posts WHERE rowid IN (SELECT rowid FROM posts
+WHERE board = ? AND thread = 0 AND deleted = 0 ORDER BY datetime(tdate) LIMIT ?)""", (board, deathRow));
+        # delete orphaned replies
+        cursor.execute("""
+DELETE FROM posts WHERE board = ? AND thread != 0
+AND thread NOT IN (SELECT id FROM posts WHERE board = ? AND thread = 0)""", (board, board))
+        db.commit()
+
 def getNewThreadWord(cursor, board):
     result = run(['./scripts/threadword.sh', board], stdout=PIPE)
     word = result.stdout.decode()
@@ -56,6 +77,10 @@ VALUES (?, ?, ?, ?, ?)
     if threadID == 0:
         thread = getThreadInfo(cursor, board, id)
         eliminateThreadWord(board, tword)
+
+        if config['board']['prune']:
+            pruneBoard(db, cursor, board)
+
     else:
         getPostInfo(cursor, board, id)
 

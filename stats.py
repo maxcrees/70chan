@@ -27,6 +27,6 @@ if __name__ == '__main__':
             pluralPost = ''
         else:
             pluralPost = 's'
-        write('  {} post{} in {} thread{}'.format(board['posts'], pluralPost,
+        write('  history:      {} post{} in {} thread{}'.format(board['posts'], pluralPost,
               board['threads'], pluralThread))
-        write('  last post on {} UTC'.format(board['ts']))
+        write('  last post on: {} UTC'.format(board['ts']))

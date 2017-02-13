@@ -131,7 +131,7 @@ def showBoard(cursor, board, env):
     else:
         skip = env['skip']
 
-    cursor.execute('SELECT threads FROM boards WHERE name = ?', (board,))
+    cursor.execute('SELECT COUNT(*) FROM posts WHERE board = ? AND thread = 0', (board,))
     try: totalThreads = cursor.fetchone()[0]
     except TypeError:
         critError('Board not found')
