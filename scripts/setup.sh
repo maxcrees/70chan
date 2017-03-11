@@ -37,17 +37,11 @@ sed -i "s#DEFAULT 'password'#DEFAULT '$delpass'#" schema.sql
 sed -i "s#\"password\"#\"$delpass\"#" board.py
 
 echo 'Initializing database...'
-db=$(./config.py file db pass)
+db="$(./config.py file db)"
 if ! sqlite3 -bail -init 'schema.sql' "$db" '.quit'; then
   echo 'Something went wrong with SQLite, bailing out...'
   exit 1
 fi
-if ! chown -c "$owner":"$grp" "$db"; then
-  echo 'Could not change ownership of database file; maybe you need to sudo?'
-  exit 1
-fi
-chmod -c 660 "$db"
-echo
 
 echo
 echo 'Changing permissions...'

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 from datetime import datetime
+from mimetypes import guess_extension as guess_fn_ext
 from os import environ
 from subprocess import PIPE, run
+from urllib.request import urlopen
 
 from config import *
 from bbs import *
@@ -15,7 +17,6 @@ def pruneBoard(db, cursor, board):
         critError('Board not found')
 
     deathRow = activeThreads - config.getint('board', 'prune')
-    print(repr(deathRow))
     if deathRow > 0:
         # delete OPs on death row
         cursor.execute("""
@@ -45,14 +46,59 @@ def eliminateThreadWord(board, word):
     with open(config['file']['words'] + '.' + board, 'a') as words:
         words.write(word + '\n')
 
+def getImage(board, id, url):
+    # XXX
+    maxsize = 1048576 # 1 MiB in bytes
+    chunksize = 16 * 1024 # bytes
+
+    try: response = urlopen(url)
+    except: userError('Could not load image URL')
+    headers = response.info()
+
+    try: size = int(headers['Content-Length'])
+    except: userError('Could not load URL / get image size')
+    # XXX Content-Length is in octets, which is 1:1 with bytes on most systems
+    if size > maxsize:
+        userError('Image size is greater than 1 MiB')
+
+    try: mime = headers['Content-Type']
+    except: userError('Could not get image Content-Type')
+    if not mime.startswith('image/'):
+        userError('Content-Type does not start with image/')
+    extension = guess_fn_ext(mime) or userError('Could not guess filename extension')
+
+    try:
+        with open('/srv/gopher/upload/{}/{}{}'.format(board, id, extension), 'wb') as dump:
+            size = 0
+            while size < maxsize:
+                chunk = response.read(chunksize)
+                if not chunk: break
+                dump.write(chunk)
+                size += chunksize
+
+    except: critError('Could not save image')
+
+    return extension
+
 def newPost(db, cursor, board, thread, ip, text):
     """Create a new post"""
+    id = getPostNumber(cursor, board) + 1
+
     text = sanitize(text)
     if not text:
         userError('Rejecting empty post')
+    if text.startswith('http'):
+        text = text.split()
+        url = text[0]
+        text = ' '.join(text[1:])
+        if not text:
+            userError('Rejecting empty post')
+        imageext = getImage(board, id, url)
+        imagename = '[image uploaded via URL]'
+    else:
+        imageext = ''
+        imagename = ''
     text = '\n'.join(textwrap(text))
-
-    id = getPostNumber(cursor, board) + 1
 
     if type(thread) == int:
         threadID = thread
@@ -62,14 +108,14 @@ def newPost(db, cursor, board, thread, ip, text):
     if threadID == 0:
         tword = getNewThreadWord(cursor, board)
         cursor.execute("""
-INSERT INTO posts (board, thread, tdate, tword, id, ip, text)
-VALUES (?, 0, CURRENT_TIMESTAMP, ?, ?, ?, ?)
-        """, (board, tword, id, ip, text))
+INSERT INTO posts (board, thread, tdate, tword, id, ip, text, imagename, imageext)
+VALUES (?, 0, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?)
+        """, (board, tword, id, ip, text, imagename, imageext))
     else:
         cursor.execute("""
-INSERT INTO posts (board, thread, id, ip, text)
-VALUES (?, ?, ?, ?, ?)
-        """, (board, threadID, id, ip, text))
+INSERT INTO posts (board, thread, id, ip, text, imagename, imageext)
+VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (board, threadID, id, ip, text, imagename, imageext))
 
     db.commit()
 

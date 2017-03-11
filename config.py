@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 from configparser import ConfigParser
 from os import environ, getcwd, chdir
-from os.path import isfile, join as path_join
+from os.path import isdir, isfile, join as path_join
 from sys import argv, exit
 
-try: root = INSTALLATION_PATH
+try: root = '/srv/gopher/70chan'
 except NameError:
     print('3*** configuration error: you must run scripts/setup.sh first! ***\tfake\t(NULL)\t0')
     exit(255)
@@ -22,7 +22,8 @@ configDefaults = {
         'lock': 'data/lock',
         'gopher': '.gopher',
         'wordlist': '/usr/share/dict/words',
-        'words': 'data/words'
+        'words': 'data/words',
+        'upload': '../upload'
     },
     'path': {
         'board': '/',
@@ -51,7 +52,14 @@ for f, path in config['file'].items():
         config['file'][f] = path_join(getcwd(), config['file'][f])
         path = config['file'][f]
 
-    if f != 'words' and f != 'lock' and not isfile(path) and len(argv) < 4:
+    if f == 'words':
+        pass
+    elif f == 'lock':
+        pass
+    elif f == 'upload':
+        if not isdir(path):
+            print('3*** configuration error: "{}" does not exist ***\tfake\t(NULL)\t0'.format(path))
+    elif not isfile(path) and len(argv) < 4:
         print('3*** configuration error: "{}" does not exist ***\tfake\t(NULL)\t0'.format(path))
         exit(255)
 

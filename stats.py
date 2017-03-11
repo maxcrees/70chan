@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from os.path import join as path_join
+from os.path import isfile, join as path_join
 
 from bbs import *
 from config import *
@@ -30,3 +30,7 @@ if __name__ == '__main__':
         write('  history:      {} post{} in {} thread{}'.format(board['posts'], pluralPost,
               board['threads'], pluralThread))
         write('  last post on: {} UTC'.format(board['ts']))
+
+    if isfile(config['file']['lock']):
+        write('')
+        write('*** BBS is currently offline ***', ftype='3')

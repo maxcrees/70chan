@@ -14,16 +14,17 @@ tier2=(. config.py data scripts scripts/*.sh)
 # Tier 3: non-executables
 tier3=(bbs.py data/config.ini.sample .gopher.rec.sample LICENSE README \
        schema.sql TODO)
+db="$(./config.py file db pass)"
 
 if ! chmod -c 771 ${tier1[*]}; then
   echo 'Could not change permissions of the files; maybe you need to sudo?'
   exit 1
 fi
 chmod -c 770 ${tier2[*]}
-chmod -c 660 ${tier3[*]}
+chmod -c 660 ${tier3[*]} $db
 
 if [ -n "$1" ] && [ -n "$2" ]; then
-  if ! chown -c "$1":"$2" ${tier1[*]} ${tier2[*]} ${tier3[*]}; then
+  if ! chown -c "$1":"$2" ${tier1[*]} ${tier2[*]} ${tier3[*]} $db; then
     echo 'Could not change ownership of the files; maybe you need to sudo?'
     exit 1
   fi

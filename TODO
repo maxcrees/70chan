@@ -1,7 +1,6 @@
-* CLI client + corresponding HTTP endpoint (for image uploads)
-* Configurable allowed file type extensions
 * Move default deletion password out of schema.sql and into config.ini
 * Per-board settings in config.ini
+* Make POSTING file dynamic
 
 Far future:
 * Admin from browser??

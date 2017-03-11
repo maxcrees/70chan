@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+from os import remove as file_rm
+from os.path import isfile, join as path_join
+from sys import exit
 
 from bbs import *
 from config import *
@@ -7,12 +10,17 @@ def delPost(db, cursor, board, id, ip, password):
     """Delete a post"""
 
     # Delete post
-    cursor.execute('SELECT thread FROM posts WHERE board = ? AND id = ? AND ip = ? AND password = ? AND deleted = 0', (board, id, ip, password))
+    cursor.execute('SELECT thread, imageext FROM posts WHERE board = ? AND id = ? AND ip = ? AND password = ? AND deleted = 0', (board, id, ip, password))
     selection = cursor.fetchone()
     if not selection:
         userError('Post not found with that board / ID / IP address / password combination')
     cursor.execute('UPDATE posts SET deleted = 1 WHERE board = ? AND id = ?', (board, id))
     db.commit()
+    imageext = selection['imageext']
+    filename = path_join(config['file']['upload'], board, str(id) + imageext)
+    if imageext and isfile(filename):
+        try: file_rm(filename)
+        except: pass
     write('Deleted post #{}'.format(id), ftype='3')
 
     # Delete thread if OP and all replies are deleted
@@ -50,16 +58,24 @@ if __name__ == '__main__':
 
     id = query.group(2)
     if not id:
-        userError('A post ID is required to delete a post')
+        try:
+            id = int(environ['SEARCH'])
+            write('Enter password', path_join(config['path']['del'], board, str(id)), '7')
+            exit(0)
+        except: pass
+        if not id:
+            write('Enter numeric post ID', path_join(config['path']['del'], board), '7')
+            exit(0)
 
-    try: password = environ['SEARCH']
-    except KeyError:
-        userError('No password given')
+    else:
+        try: password = environ['SEARCH']
+        except KeyError:
+            userError('No password given')
 
-    db, cursor = connDB()
-    try:
-        id = int(id)
-        checkIntLength(id)
-    except: pass
-    delPost(db, cursor, board, id, ip, password)
-    db.close()
+        db, cursor = connDB()
+        try:
+            id = int(id)
+            checkIntLength(id)
+        except: pass
+        delPost(db, cursor, board, id, ip, password)
+        db.close()

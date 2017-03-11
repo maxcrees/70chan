@@ -104,7 +104,7 @@ WHERE name = ?""", (board,))
 def getBBSlock():
     """Check if the lockfile exists raise error if it does"""
     if isfile(config['file']['lock']):
-        critError('BBS is offline')
+        critError('BBS is currently offline')
 
 def getThreadLink(board, thread):
     """Get selector to given thread object with respect to preference between ID and thread words"""

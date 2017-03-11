@@ -51,7 +51,7 @@ def mapCommand(query):
     return env
 
 def showLinkImg(board, id, author, name, date, imageext, imagename):
-    selector = path_join(config['path']['upload'], board, str(id) + '.' + imageext)
+    selector = path_join(config['path']['upload'], board, str(id) + imageext)
     if name:
         write('{} RE: {} #{} @ {} :: {}'.format(author, name, id, date, imagename), selector, 'I')
     else:
@@ -88,7 +88,6 @@ def showThread(cursor, board, thread, replyLimit=0, truncate=0):
 
     write('=======[ No. {} :: {} ]======= {} {}'.format(thread['id'], thread['tword'], thread['replies'], replyStr), selector, '1')
     showPost(thread, truncate)
-    if not truncate: write('')
 
     # Show last "replyLimit" replies
     replySkip = int(thread['replies']) - replyLimit
@@ -108,8 +107,6 @@ FROM posts WHERE thread = ? AND board = ? ORDER by ts""", (thread['id'], board))
     replies = cursor.fetchall()
     for reply in replies:
         showPost(reply, truncate)
-
-    write('')
 
 def showPost(post, truncate=0):
     if post['deleted'] == 1:
@@ -147,6 +144,7 @@ def showBoard(cursor, board, env):
         if page > 0:
             selector = path_join(config['path']['board'], board, 'skip', str(back))
             write('Previous page ({} of {})'.format(page, pages), selector, '1')
+            write('')
 
     # Retrieve threads
     cursor.execute("""
@@ -161,6 +159,7 @@ WHERE board = ? AND thread = 0 ORDER BY tdate DESC LIMIT ?,?""", (board, skip, c
 
     for thread in threadList:
         showThread(cursor, board, thread, replyLimit=config.getint('board', 'showReplies'), truncate=1)
+        write('')
 
     # Paginate
     showThreads = config.getint('board', 'showThreads')
@@ -195,11 +194,8 @@ if __name__ == '__main__':
         write('~~~ Showing one thread... ~~~')
         selector = path_join(config['path']['post'], board, str(env['thread']))
         write('Reply', selector, '7')
-        write('Anonymously post a text reply to this thread. Your name will be "Anonymous"')
-        write('If you wish to delete your post later, use password "password"')
-        write('(but your IP address must match!)')
-        write('More options (such as image uploading) are available using the CLI client')
-        write('NB: You may need to refresh this page to see your new post after posting')
+        selector = path_join(config['path']['del'], board)
+        write('Delete post by numeric ID', selector, '7')
         selector = path_join(config['path']['board'], board)
         write('Return to board index', selector, '1')
         write('')
@@ -223,6 +219,8 @@ if __name__ == '__main__':
         write('~~~ Showing one board... ~~~')
         selector = path_join(config['path']['post'], board)
         write('Create a new thread', selector, '7')
+        selector = path_join(config['path']['del'], board)
+        write('Delete a post by numeric ID', selector, '7')
         write('Return to BBS home', config['path']['board'], '1')
         write('')
         showBoard(cursor, board, env)

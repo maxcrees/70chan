@@ -1,0 +1,4 @@
+* When posting or replying via gopher:
+  * your name will be "Anonymous"
+  * your deletion password will be "password" (but your IP address must match!)
+  * you can start your post with a URL (starting with "http") to an image < 1 MiB in order to upload it
