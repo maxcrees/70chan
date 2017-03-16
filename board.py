@@ -52,6 +52,7 @@ def mapCommand(query):
 
 def showLinkImg(board, id, author, name, date, imageext, imagename):
     selector = path_join(config['path']['upload'], board, str(id) + imageext)
+    author = author.ljust(config.getint('board', 'maxAuthorLength'))
     if name:
         write('{} RE: {} #{} @ {} :: {}'.format(author, name, id, date, imagename), selector, 'I')
     else:
@@ -59,6 +60,7 @@ def showLinkImg(board, id, author, name, date, imageext, imagename):
 
 def showLinkTxt(board, id, author, name, date):
     selector = path_join(config['path']['board'], board, 'post', str(id))
+    author = author.ljust(config.getint('board', 'maxAuthorLength'))
     if name:
         write('{} RE: {} #{} @ {}'.format(author, name, id, date), selector, '1')
     else:

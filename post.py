@@ -89,6 +89,21 @@ def newPost(db, cursor, board, thread, ip, text):
     text = sanitize(text)
     if not text:
         userError('Rejecting empty post')
+
+    # Name handling
+    if text.startswith('!'):
+        text = text.split()
+        upperBound = config.getint('board', 'maxAuthorLength') + 1
+        author = text[0][1:upperBound].strip()
+        if not author:
+            author = 'Anonymous'
+        text = ' '.join(text[1:])
+        if not text:
+            userError('Rejecting empty post')
+    else:
+        author = 'Anonymous'
+
+    # Image uploading
     if text.startswith('http'):
         text = text.split()
         url = text[0]
@@ -100,6 +115,8 @@ def newPost(db, cursor, board, thread, ip, text):
     else:
         imageext = ''
         imagename = ''
+
+    # Text-wrapping
     text = '\n'.join(textwrap(text))
 
     if type(thread) == int:
@@ -110,14 +127,14 @@ def newPost(db, cursor, board, thread, ip, text):
     if threadID == 0:
         tword = getNewThreadWord(cursor, board)
         cursor.execute("""
-INSERT INTO posts (board, thread, tdate, tword, id, ip, text, imagename, imageext)
-VALUES (?, 0, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?)
-        """, (board, tword, id, ip, text, imagename, imageext))
+INSERT INTO posts (board, thread, tdate, tword, id, author, ip, text, imagename, imageext)
+VALUES (?, 0, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?)
+        """, (board, tword, id, author, ip, text, imagename, imageext))
     else:
         cursor.execute("""
-INSERT INTO posts (board, thread, id, ip, text, imagename, imageext)
-VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (board, threadID, id, ip, text, imagename, imageext))
+INSERT INTO posts (board, thread, id, author, ip, text, imagename, imageext)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (board, threadID, id, author, ip, text, imagename, imageext))
 
     db.commit()
 

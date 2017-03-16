@@ -36,7 +36,8 @@ configDefaults = {
         'showReplies': 3,
         'showTextLines': 3,
         'preferThreadWords': True,
-        'prune': 50
+        'prune': 50,
+        'maxAuthorLength': 16
     },
     'post': {
         'throttle': 120
@@ -76,8 +77,9 @@ try:
     config.getint('board', 'showTextLines')
     config.getint('board', 'prune')
     config.getint('post', 'throttle')
+    config.getint('board', 'maxAuthorLength')
 except ValueError:
-    print('3*** configuration error: board.{showThreads, showReplies, showTextLines, prune} and post.throttle must be integers ***\tfake\t(NULL)\t0')
+    print('3*** configuration error: board.{showThreads, showReplies, showTextLines, prune, maxAuthorLength} and post.throttle must be integers ***\tfake\t(NULL)\t0')
     exit(255)
 
 if __name__ == '__main__' and 'REQUEST' not in environ:

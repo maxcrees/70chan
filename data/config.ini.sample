@@ -67,6 +67,9 @@
 ; Set to 0 to retain all threads indefinitely
 ;prune = 50
 
+; Maximum character length of author names
+;maxAuthorLength = 16
+
 [post]
 ; Prevent posting for $post.throttle seconds after the last post on the current
 ; board
