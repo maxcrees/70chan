@@ -2,6 +2,7 @@
 from datetime import datetime
 from mimetypes import guess_extension as guess_fn_ext
 from os import environ
+from os.path import join as path_join
 from subprocess import PIPE, run
 from urllib.request import urlopen
 
@@ -68,7 +69,8 @@ def getImage(board, id, url):
     extension = guess_fn_ext(mime) or userError('Could not guess filename extension')
 
     try:
-        with open('/srv/gopher/upload/{}/{}{}'.format(board, id, extension), 'wb') as dump:
+        filename = path_join(config['file']['upload'], board, str(id) + extension)
+        with open(filename, 'wb') as dump:
             size = 0
             while size < maxsize:
                 chunk = response.read(chunksize)
@@ -146,7 +148,9 @@ def getBoardThrottling(cursor, board):
         critError('Board not found')
     try: ts = datetime.strptime(ts, '%Y-%m-%d %H:%M:%S')
     except ValueError:
-        critError('Board timestamp could not be parsed')
+        # Board timestamp could not be parsed, assume this is a new board
+        # and let it go
+        return
 
     diff = datetime.now() - ts
     remaining = int(config.getint('post', 'throttle') - diff.total_seconds())

@@ -24,6 +24,10 @@
 ; will check the "words.$board" file in the CWD
 ;words = data/words
 
+; Path to uploads ***directory***. In this directory there should be subdirectories
+; for each board, suid gopher and guid http.
+;upload = ../upload
+
 [path]
 ; These settings must be kept in sync with your gophermap or nothing will work
 

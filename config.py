@@ -4,7 +4,7 @@ from os import environ, getcwd, chdir
 from os.path import isdir, isfile, join as path_join
 from sys import argv, exit
 
-try: root = '/srv/gopher/70chan'
+try: root = INSTALLATION_PATH
 except NameError:
     print('3*** configuration error: you must run scripts/setup.sh first! ***\tfake\t(NULL)\t0')
     exit(255)
