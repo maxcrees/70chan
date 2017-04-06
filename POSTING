@@ -1,6 +1,39 @@
-* When posting or replying via gopher:
-  * Your deletion password will be "password" (but your IP address must match!)
-  * You can start your post with "!Name" to use a name other than Anonymous, up
-    to 16 characters
-  * You can start your post (after your "!Name" if you include one) with a URL
-    (starting with "http" or "https") to an image < 1 MiB in order to upload it
+---------- Names -------------------
+You can register a name at 1/register.
+
+Name requirements:
+  * Alphanumeric, underscore, dashes only
+  * Maximum 16 characters in length
+  * Must not case-insensitive match an existing name (e.g. if a name "User1"
+    already exists, "user1", "USER1" etc. cannot be registered).
+
+Password requirements:
+  * Any length
+  * Excalamation points are acceptable
+  * Spaces are not allowed
+
+Once you register, you can start your post with "!Name!your_password" to use
+your name.
+
+---------- Images ------------------
+You can start your post (after your "!Name" if you include one) with a URL
+(starting with "http" or "https") to an image < 1 MiB in order to upload it.
+
+e.g.
+
+  !Name!your_password http://example.com/image.jpg body of the text post
+
+or
+
+  http://example.com/image.jpg body of the text post
+
+---------- Deleting posts ----------
+If the post is Anonymous, your deletion password will be "password" (but your
+IP address must match!)
+
+Otherwise, use your "!Name" password.
+
+---------- Anti-spam ---------------
+Each board currently has a separate cool-down time of 2 minutes as an
+anti-spam measure, meaning one must wait 2 minutes after the last post
+(reply or original post) before a new post can be made.

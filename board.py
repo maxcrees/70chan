@@ -50,21 +50,15 @@ def mapCommand(query):
 
     return env
 
-def showLinkImg(board, id, author, name, date, imageext, imagename):
+def showLinkImg(board, id, author, date, imageext, imagename):
     selector = path_join(config['path']['upload'], board, str(id) + imageext)
     author = author.ljust(config.getint('board', 'maxAuthorLength'))
-    if name:
-        write('{} RE: {} #{} @ {} :: {}'.format(author, name, id, date, imagename), selector, 'I')
-    else:
-        write('{} #{} @ {} :: {}'.format(author, id, date, imagename), selector, 'I')
+    write('{} #{} @ {} :: {}'.format(author, id, date, imagename), selector, 'I')
 
-def showLinkTxt(board, id, author, name, date):
+def showLinkTxt(board, id, author, date):
     selector = path_join(config['path']['board'], board, 'post', str(id))
     author = author.ljust(config.getint('board', 'maxAuthorLength'))
-    if name:
-        write('{} RE: {} #{} @ {}'.format(author, name, id, date), selector, '1')
-    else:
-        write('{} #{} @ {}'.format(author, id, date), selector, '1')
+    write('{} #{} @ {}'.format(author, id, date), selector, '1')
 
 def showText(text, truncate=0):
     textRows = textwrap(text)
@@ -117,10 +111,10 @@ def showPost(post, truncate=0):
         else:
             notice('Replier deleted #{} (originally posted @ {})'.format(post['id'], post['ts']))
     elif post['imageext']:
-        showLinkImg(board, post['id'], post['author'], post['name'], post['ts'], post['imageext'], post['imagename'])
+        showLinkImg(board, post['id'], post['author'], post['ts'], post['imageext'], post['imagename'])
         showText(post['text'], truncate)
     else:
-        showLinkTxt(board, post['id'], post['author'], post['name'], post['ts'])
+        showLinkTxt(board, post['id'], post['author'], post['ts'])
         showText(post['text'], truncate)
 
 def showBoard(cursor, board, env):
@@ -212,7 +206,7 @@ if __name__ == '__main__':
             thread = getThreadInfo(cursor, board, int(post['thread']))
         selector = getThreadLink(board, thread)
         write('Show entire thread', selector, '1')
-        write('Delete this post (requires matching password and IP address)', path_join(config['path']['del'], board, str(post['id'])), '7')
+        write('Delete this post (requires matching password and, if Anonymous, IP address)', path_join(config['path']['del'], board, str(post['id'])), '7')
         write('')
 
         showPost(post)

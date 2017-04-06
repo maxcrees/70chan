@@ -29,7 +29,8 @@ configDefaults = {
         'board': '/',
         'post': '/post/',
         'del': '/del/',
-        'upload': '/upload/'
+        'upload': '/upload/',
+        'register': '/register/'
     },
     'board': {
         'showThreads': 10,
@@ -37,7 +38,8 @@ configDefaults = {
         'showTextLines': 3,
         'preferThreadWords': True,
         'prune': 50,
-        'maxAuthorLength': 16
+        'maxAuthorLength': 16,
+        'defaultPassword': 'password'
     },
     'post': {
         'throttle': 120

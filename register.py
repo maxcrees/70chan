@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+from crypt import crypt, METHOD_SHA512
+from hmac import compare_digest as compare_hash
+from os.path import join as path_join
+from random import choice
+import re
+from sys import exit
+
+from bbs import *
+from config import *
+
+def checkPasswd(name, plainPW):
+    passwd = loadPasswd()
+
+    if not name in passwd.keys():
+        userError('That name is not registered')
+
+    hash = crypt(plainPW, passwd[name])
+    if not compare_hash(passwd[name], hash):
+        userError('Password does not match')
+
+def loadPasswd():
+    passwd = {}
+    with open('data/passwd') as f:
+        for line in f:
+            line = line.strip().split(':')
+            passwd[line[0]] = line[1]
+
+    return passwd
+
+def register(passwd, name, pw):
+    hash = crypt(pw, METHOD_SHA512)
+    with open('data/passwd', 'a') as f:
+        f.write(name + ':' + hash + '\n')
+
+    write('Registered name "{}"'.format(name), ftype='3')
+
+def nameCheck(name, names):
+    validName = r'^[A-Za-z0-9_-]+$'
+    validLen = config.getint('board', 'maxAuthorLength')
+
+    if not re.match(validName, name):
+        userError('Name can only be alphanumeric with dashes and underscores')
+    if len(name) > validLen:
+        userError('Name is too long (max {} characters)'.format(validLen))
+    if name.lower() in names:
+        userError('Name already in use')
+    if name.lower() == 'anonymous':
+        userError('Name cannot be "Anonymous"')
+
+if __name__ == '__main__':
+    getBBSlock()
+    passwd = loadPasswd()
+    names = [name.lower() for name in passwd.keys()]
+
+    pattern = re.escape(config['path']['register'][1:]) + r'(.*)/?'
+    queryfinder = re.compile(pattern)
+    try: query = re.match(queryfinder, environ['QUERY'])
+    except KeyError:
+        critError('QUERY is missing. Check gopher server implementation')
+    try: name = query.group(1)
+    except AttributeError: name = None
+
+    if not query or not name:
+        try: name = environ['SEARCH']
+        except KeyError:
+            write('Enter name', config['path']['register'][:-1], '7')
+            exit(0)
+
+        nameCheck(name, names)
+        write('Enter password', path_join(config['path']['register'], name), '7')
+
+    else:
+        nameCheck(name, names)
+
+        try: pw = environ['SEARCH']
+        except KeyError:
+            write('Enter password', path_join(config['path']['register'], name), '7')
+            exit(0)
+
+        if pw.find(' ') != -1:
+            userError('Password cannot contain spaces')
+
+        register(passwd, name, pw)

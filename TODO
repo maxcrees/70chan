@@ -1,7 +1,5 @@
-* Move default deletion password out of schema.sql and into config.ini
 * Per-board settings in config.ini
 * Make POSTING file dynamic
-* Consider dropping "subject" from schema
 
 Far future:
 * Admin from browser??

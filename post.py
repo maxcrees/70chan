@@ -8,6 +8,7 @@ from urllib.request import urlopen
 
 from config import *
 from bbs import *
+from register import loadPasswd, checkPasswd
 
 def pruneBoard(db, cursor, board):
     # XXX images will also need to be deleted
@@ -82,6 +83,17 @@ def getImage(board, id, url):
 
     return extension
 
+def handleLogin(login):
+    login = login.split('!')
+    if len(login) == 1:
+        userError('You must supply a password to use a name')
+
+    author = login[0]
+    pw = '!'.join(login[1:])
+    checkPasswd(author, pw)
+
+    return author
+
 def newPost(db, cursor, board, thread, ip, text):
     """Create a new post"""
     id = getPostNumber(cursor, board) + 1
@@ -93,10 +105,11 @@ def newPost(db, cursor, board, thread, ip, text):
     # Name handling
     if text.startswith('!'):
         text = text.split()
-        upperBound = config.getint('board', 'maxAuthorLength') + 1
-        author = text[0][1:upperBound].strip()
-        if not author:
+        login = text[0][1:]
+        if not login:
             author = 'Anonymous'
+        else:
+            author = handleLogin(login)
         text = ' '.join(text[1:])
         if not text:
             userError('Rejecting empty post')

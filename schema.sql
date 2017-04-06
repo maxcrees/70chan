@@ -18,10 +18,8 @@ CREATE TABLE "posts" (
   `id`  INTEGER NOT NULL,                             -- post ID
   `author`  TEXT NOT NULL DEFAULT 'Anonymous',        -- author name
   `ip`  TEXT,                                         -- author IP address
-  `name`  TEXT,                                       -- post subject
   `ts`  TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,      -- post date
   `text`  TEXT NOT NULL,                              -- post body
-  `password`  TEXT NOT NULL DEFAULT 'password',       -- post deletion password
   `deleted` INTEGER NOT NULL DEFAULT 0,               -- if deleted == 1, hide this post's content from users
   `imageext`  TEXT,                                   -- image filename extension, with period (leave blank if no image attached)
   `imagename` TEXT                                    -- original image filename from poster's computer (leave blank if no image)

@@ -5,15 +5,25 @@ from sys import exit
 
 from bbs import *
 from config import *
+from register import checkPasswd
 
 def delPost(db, cursor, board, id, ip, password):
     """Delete a post"""
 
     # Delete post
-    cursor.execute('SELECT thread, imageext FROM posts WHERE board = ? AND id = ? AND ip = ? AND password = ? AND deleted = 0', (board, id, ip, password))
+    cursor.execute('SELECT author, ip, thread, imageext FROM posts WHERE board = ? AND id = ? AND deleted = 0', (board, id))
     selection = cursor.fetchone()
+
     if not selection:
-        userError('Post not found with that board / ID / IP address / password combination')
+        userError('Post not found with that board / ID combination')
+    if selection['author'] == 'Anonymous':
+        if ip != selection['ip']:
+            userError('Anonymous IP does not match')
+        if password != config['board']['defaultPassword']:
+            userError('Password does not match')
+    else:
+        checkPasswd(selection['author'], password)
+
     cursor.execute('UPDATE posts SET deleted = 1 WHERE board = ? AND id = ?', (board, id))
     db.commit()
     imageext = selection['imageext']

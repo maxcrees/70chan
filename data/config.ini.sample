@@ -30,6 +30,7 @@
 
 [path]
 ; These settings must be kept in sync with your gophermap or nothing will work
+; Additionally note that usually these all need to end in a slash
 
 ; Selector for board access: e.g. if there is a board named "example", the
 ; selector to view it would be 1/$path.board/example
@@ -45,6 +46,9 @@
 
 ; Selector for the uploads directory
 ;upload = /upload/
+
+; Selector for the registration script
+;register = /register/
 
 [board]
 ; Number of threads to show on each page of a board index
@@ -69,6 +73,10 @@
 
 ; Maximum character length of author names
 ;maxAuthorLength = 16
+
+; Deletion password to use for Anonymous posters. Note that to delete an Anonymous
+; post, the IP address must match too.
+;defaultPassword = password
 
 [post]
 ; Prevent posting for $post.throttle seconds after the last post on the current
