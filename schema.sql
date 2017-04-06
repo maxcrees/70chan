@@ -65,9 +65,9 @@ BEGIN
 END;
 -- Update thread last reply date and reply count in posts table
 CREATE TRIGGER update_thread AFTER INSERT ON posts
-WHEN NEW.thread != 0 AND EXISTS(SELECT id FROM posts WHERE id = NEW.thread AND thread = 0)
+WHEN NEW.thread != 0 AND EXISTS(SELECT id FROM posts WHERE id = NEW.thread AND thread = 0 AND board = NEW.board)
 BEGIN
-  UPDATE posts SET tdate = NEW.ts, replies = replies + 1 WHERE id = NEW.thread AND thread = 0;
+  UPDATE posts SET tdate = NEW.ts, replies = replies + 1 WHERE id = NEW.thread AND thread = 0 AND board = NEW.board;
 END;
 -- Update board timestamp
 CREATE TRIGGER update_board_date AFTER INSERT ON posts
