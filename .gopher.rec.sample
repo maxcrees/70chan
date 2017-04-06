@@ -2,6 +2,7 @@
 !dirproc-raw	post	./post.py
 !dirproc-raw	del	./del.py
 !dirproc-raw	register	./register.py
+!dirproc-raw	changepw	./changepw.py
 # Boards
 !dirproc-raw	b	./board.py
 !dirproc-raw	t	./board.py

@@ -8,7 +8,7 @@ from urllib.request import urlopen
 
 from config import *
 from bbs import *
-from register import loadPasswd, checkPasswd
+from register import checkPasswd
 
 def pruneBoard(db, cursor, board):
     # XXX images will also need to be deleted

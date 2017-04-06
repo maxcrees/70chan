@@ -2,18 +2,22 @@
 from crypt import crypt, METHOD_SHA512
 from hmac import compare_digest as compare_hash
 from os.path import join as path_join
-from random import choice
 import re
 from sys import exit
 
 from bbs import *
 from config import *
 
-def checkPasswd(name, plainPW):
-    passwd = loadPasswd()
-
+def nameExists(passwd, name):
     if not name in passwd.keys():
         userError('That name is not registered')
+
+def secHash(text):
+    return crypt(text, METHOD_SHA512)
+
+def checkPasswd(name, plainPW):
+    passwd = loadPasswd()
+    nameExists(passwd, name)
 
     hash = crypt(plainPW, passwd[name])
     if not compare_hash(passwd[name], hash):
@@ -29,7 +33,7 @@ def loadPasswd():
     return passwd
 
 def register(passwd, name, pw):
-    hash = crypt(pw, METHOD_SHA512)
+    hash = secHash(pw)
     with open('data/passwd', 'a') as f:
         f.write(name + ':' + hash + '\n')
 

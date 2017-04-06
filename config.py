@@ -30,7 +30,8 @@ configDefaults = {
         'post': '/post/',
         'del': '/del/',
         'upload': '/upload/',
-        'register': '/register/'
+        'register': '/register/',
+        'changepw': '/changepw/'
     },
     'board': {
         'showThreads': 10,

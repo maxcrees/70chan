@@ -1,3 +1,4 @@
+; vim: set ft=dosini:
 [server]
 ; Gopher server domain name
 ;host = localhost
@@ -49,6 +50,9 @@
 
 ; Selector for the registration script
 ;register = /register/
+
+; Selector for the password-changing script
+;changepw = /changepw/
 
 [board]
 ; Number of threads to show on each page of a board index

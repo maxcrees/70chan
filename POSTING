@@ -12,8 +12,12 @@ Password requirements:
   * Excalamation points are acceptable
   * Spaces are not allowed
 
+Please don't use a password that you care about. Gopher is an insecure protocol.
+
 Once you register, you can start your post with "!Name!your_password" to use
 your name.
+
+Your password can be changed at a later time at 1/changepw.
 
 ---------- Images ------------------
 You can start your post (after your "!Name" if you include one) with a URL
