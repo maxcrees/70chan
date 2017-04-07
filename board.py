@@ -52,12 +52,12 @@ def mapCommand(query):
 
 def showLinkImg(board, id, author, date, imageext, imagename):
     selector = path_join(config['path']['upload'], board, str(id) + imageext)
-    author = author.ljust(config.getint('board', 'maxAuthorLength'))
+    author = author.ljust(config.getint('server', 'maxAuthorLength'))
     write('{} #{} @ {} :: {}'.format(author, id, date, imagename), selector, 'I')
 
 def showLinkTxt(board, id, author, date):
     selector = path_join(config['path']['board'], board, 'post', str(id))
-    author = author.ljust(config.getint('board', 'maxAuthorLength'))
+    author = author.ljust(config.getint('server', 'maxAuthorLength'))
     write('{} #{} @ {}'.format(author, id, date), selector, '1')
 
 def showText(text, truncate=0):
@@ -66,7 +66,7 @@ def showText(text, truncate=0):
     count = 0
     for textRow in textRows:
         count += 1
-        if count > config.getint('board', 'showTextLines') and truncate:
+        if count > boardconf.getint(board, 'showTextLines') and truncate:
             write('~~~ Post truncated... ~~~');
             break
         elif textRow == "":
@@ -128,11 +128,11 @@ def showBoard(cursor, board, env):
     try: totalThreads = cursor.fetchone()[0]
     except TypeError:
         critError('Board not found')
-    pages = ceil(totalThreads / config.getint('board', 'showThreads'))
+    pages = ceil(totalThreads / boardconf.getint(board, 'showThreads'))
 
     # Paginate
     if skip > 0:
-        showThreads = config.getint('board', 'showThreads')
+        showThreads = boardconf.getint(board, 'showThreads')
         back = skip - showThreads
         if back < 0:
             back = 0
@@ -145,7 +145,7 @@ def showBoard(cursor, board, env):
     # Retrieve threads
     cursor.execute("""
 SELECT * FROM posts
-WHERE board = ? AND thread = 0 ORDER BY tdate DESC LIMIT ?,?""", (board, skip, config['board']['showThreads']))
+WHERE board = ? AND thread = 0 ORDER BY tdate DESC LIMIT ?,?""", (board, skip, boardconf[board]['showThreads']))
 
     # Print threads
     threadList = cursor.fetchall()
@@ -154,11 +154,11 @@ WHERE board = ? AND thread = 0 ORDER BY tdate DESC LIMIT ?,?""", (board, skip, c
         critError('No posts found')
 
     for thread in threadList:
-        showThread(cursor, board, thread, replyLimit=config.getint('board', 'showReplies'), truncate=1)
+        showThread(cursor, board, thread, replyLimit=boardconf.getint(board, 'showReplies'), truncate=1)
         write('')
 
     # Paginate
-    showThreads = config.getint('board', 'showThreads')
+    showThreads = boardconf.getint(board, 'showThreads')
     if totalThreads - skip - showThreads > 0:
         skip += showThreads
         page = ceil(skip / showThreads) + 1

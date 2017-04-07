@@ -6,6 +6,9 @@
 ; Gopher port
 ;port = 70
 
+; Maximum character length of author names
+;maxAuthorLength = 16
+
 [file]
 ; Path to database file
 ;db = data/database.sqlite3
@@ -53,36 +56,3 @@
 
 ; Selector for the password-changing script
 ;changepw = /changepw/
-
-[board]
-; Number of threads to show on each page of a board index
-;showThreads = 10
-
-; Show the last $board.showReplies of each thread in the board index
-;showReplies = 3
-
-; Show the first $board.showTextLines of each post's body in the board index
-;showTextLines = 3
-
-; If set to "yes", selectors for individual threads will prefer human-readable
-; words as opposed to thread IDs, e.g. 1/$path.board/example/thread/threadword
-; instead of 1/$path.board/example/thread/12345
-;preferThreadWords = yes
-
-; Delete the oldest (# threads in board - $board.prune) > 0 threads
-; This should probably be a multiple of $board.showThreads if you want
-; exactly $board.prune / $board.showThreads pages
-; Set to 0 to retain all threads indefinitely
-;prune = 50
-
-; Maximum character length of author names
-;maxAuthorLength = 16
-
-; Deletion password to use for Anonymous posters. Note that to delete an Anonymous
-; post, the IP address must match too.
-;defaultPassword = password
-
-[post]
-; Prevent posting for $post.throttle seconds after the last post on the current
-; board
-;throttle = 120

@@ -2,7 +2,7 @@
 from os.path import isfile, join as path_join
 import re
 import sqlite3
-from sys import exit
+from sys import exit, argv
 from textwrap import wrap as _textwrap
 
 from config import *
@@ -109,7 +109,7 @@ def getBBSlock():
 
 def getThreadLink(board, thread):
     """Get selector to given thread object with respect to preference between ID and thread words"""
-    if config.getboolean('board', 'preferThreadWords'):
+    if boardconf.getboolean(board, 'preferThreadWords'):
         threadSelector = thread['tword']
     else:
         threadSelector = str(thread['id'])
@@ -126,5 +126,21 @@ def getIP(environ):
     ip = re.sub('^::ffff:', '', ip)
     return ip
 
-if __name__ == '__main__':
-    userError('This module is not executable')
+def genMap():
+    endpoints = ['post', 'del', 'register', 'changepw']
+
+    for endpoint in endpoints:
+        endMap = '!dirproc-raw\t{}\t{}'.format(config['path'][endpoint].replace( \
+                 '/', ''), path_join(root, endpoint + '.py'))
+        print(endMap)
+
+
+    for board in boardconf.keys():
+        if board == 'board': continue
+
+        boardMap = '!dirproc-raw\t{}\t{}'.format(board, path_join(root, 'board.py'))
+        print(boardMap)
+
+if __name__ == '__main__' and 'REQUEST' not in environ:
+    if len(argv) == 2 and argv[1] == 'genMap':
+        genMap()

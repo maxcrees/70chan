@@ -53,7 +53,7 @@ def register(passwd, name, pw):
 
 def nameCheck(name, names):
     validName = r'^[A-Za-z0-9_-]+$'
-    validLen = config.getint('board', 'maxAuthorLength')
+    validLen = config.getint('server', 'maxAuthorLength')
 
     if not re.match(validName, name):
         userError('Name can only be alphanumeric with dashes and underscores')

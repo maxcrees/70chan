@@ -18,7 +18,7 @@ def pruneBoard(db, cursor, board):
     except TypeError:
         critError('Board not found')
 
-    deathRow = activeThreads - config.getint('board', 'prune')
+    deathRow = activeThreads - boardconf.getint(board, 'prune')
     if deathRow > 0:
         # delete OPs on death row
         cursor.execute("""
@@ -102,7 +102,7 @@ def newPost(db, cursor, board, thread, ip, text):
     if not text:
         userError('Rejecting empty post')
 
-    # Name handling
+    # Authentication
     if text.startswith('!'):
         text = text.split()
         login = text[0][1:]
@@ -114,7 +114,17 @@ def newPost(db, cursor, board, thread, ip, text):
         if not text:
             userError('Rejecting empty post')
     else:
-        author = 'Anonymous'
+        if boardconf.getboolean(board, 'anonPost'):
+            author = 'Anonymous'
+        else:
+            userError('Anonymous posting is not allowed')
+
+    # Authorization
+    if 'whitelist' in boardconf[board].keys():
+        authorizedList = boardconf[board]['whitelist'].strip()
+        if authorizedList and not author in authorizedList.split():
+            prettyList = ', '.join(authorizedList.split())
+            userError('Only the following users may post to this board: ' + prettyList)
 
     # Image uploading
     if text.startswith('http'):
@@ -156,7 +166,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         thread = getThreadInfo(cursor, board, id)
         eliminateThreadWord(board, tword)
 
-        if config['board']['prune']:
+        if boardconf[board]['prune']:
             pruneBoard(db, cursor, board)
 
     else:
@@ -183,7 +193,7 @@ def getBoardThrottling(cursor, board):
         return
 
     diff = datetime.now() - ts
-    remaining = int(config.getint('post', 'throttle') - diff.total_seconds())
+    remaining = int(boardconf.getint(board, 'throttle') - diff.total_seconds())
     if remaining > 0:
         userError('No posts will be accepted to this board for {} more seconds'.format(remaining))
 

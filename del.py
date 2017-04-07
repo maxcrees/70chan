@@ -19,7 +19,7 @@ def delPost(db, cursor, board, id, ip, password):
     if selection['author'] == 'Anonymous':
         if ip != selection['ip']:
             userError('Anonymous IP does not match')
-        if password != config['board']['defaultPassword']:
+        if password != boardconf[board]['defaultPassword']:
             userError('Password does not match')
     else:
         checkPasswd(selection['author'], password)

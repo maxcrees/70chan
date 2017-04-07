@@ -18,23 +18,22 @@ if [ ! -d "$path" ]; then
   exit 1
 fi
 
-read -rp 'Enter default deletion password: ' delpass
-if [ -z "$delpass" ]; then
-  echo 'Default deletion password must not be empty. Bailing out...'
-  exit 1
-fi
-
 cd "$path"
 if [ ! -f 'config.py' ]; then
   echo "Could not find config.py in '$path', bailing out..."
   exit 1
 fi
+if [ ! -f 'data/boards.ini' ]; then
+  echo "Could not find data/boards.ini in '$path', bailing out..."
+  exit 1
+fi
 echo 'Changing INSTALLATION_PATH in config.py...'
 sed -i "s#INSTALLATION_PATH#'$path'#" config.py
 
-echo 'Changing default deletion password...'
-sed -i "s#DEFAULT 'password'#DEFAULT '$delpass'#" schema.sql
-sed -i "s#\"password\"#\"$delpass\"#" board.py
+echo
+echo 'Creating gophermap.rec...'
+gopher="$(./config.py file gopher).rec"
+./bbs.py genMap > "$gopher"
 
 echo 'Initializing database...'
 db="$(./config.py file db)"
@@ -50,7 +49,6 @@ if ! ./scripts/permissions.sh "$owner" "$grp"; then
   exit 1
 fi
 echo
-
 
 echo 'Run ./scripts/newboard.sh to create your first board.'
 

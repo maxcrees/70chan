@@ -6,6 +6,12 @@ if [ ! -f 'config.py' ]; then
   echo '! e.g. ./scripts/newboard.sh'
   exit 1
 fi
+if [ ! -f 'data/boards.ini' ]; then
+  echo '! could not find data/boards.ini'
+  echo '! this script must be run from 70chan root'
+  echo '! e.g. ./scripts/newboard.sh'
+  exit 1
+fi
 
 db=$(./config.py file db)
 gopher="$(./config.py file gopher).rec"
@@ -18,7 +24,8 @@ if [ ! -f "$db" ]; then
     exit 1
 fi
 
-echo -e "!dirproc-raw\t$name\t$root/board.py" >> "$gopher"
+echo -e "\n[$name]" >> data/boards.ini
+./bbs.py genMap > "$gopher"
 # TODO: XXX
 # This is currently susceptible to SQL injection (I think), which isn't *too* bad
 # considering this bit isn't web-facing, but it could cause cryptic errors...

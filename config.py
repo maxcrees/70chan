@@ -15,7 +15,8 @@ chdir(root)
 configDefaults = {
     'server': {
         'host': 'localhost',
-        'port': 70
+        'port': 70,
+        'maxAuthorLength': 16,
     },
     'file': {
         'db': 'data/database.sqlite3',
@@ -33,22 +34,26 @@ configDefaults = {
         'register': '/register/',
         'changepw': '/changepw/'
     },
+}
+boardconfDefaults = {
     'board': {
         'showThreads': 10,
         'showReplies': 3,
         'showTextLines': 3,
         'preferThreadWords': True,
         'prune': 50,
-        'maxAuthorLength': 16,
-        'defaultPassword': 'password'
+        'defaultPassword': 'password',
+        'throttle': 120,
+        'anonPost': True
     },
-    'post': {
-        'throttle': 120
-    }
 }
 config = ConfigParser()
 config.read_dict(configDefaults)
 config.read(path_join(getcwd(), 'data/config.ini'))
+
+boardconf = ConfigParser(default_section='board')
+boardconf.read_dict(boardconfDefaults)
+boardconf.read(path_join(getcwd(), 'data/boards.ini'))
 
 # Path resolution
 for f, path in config['file'].items():
@@ -70,19 +75,21 @@ for f, path in config['file'].items():
 config['file']['root'] = root
 
 # Type assertions
-try: config.getboolean('board', 'preferThreadWords')
+try:
+    boardconf.getboolean('board', 'preferThreadWords')
+    boardconf.getboolean('board', 'anonPost')
 except ValueError:
-    print('3*** configuration error: board.preferThreadWords must be "yes" or "no" ***\tfake\t(NULL)\t0')
+    print('3*** configuration error: board.{preferThreadWords, anonPost} must be "yes" or "no" ***\tfake\t(NULL)\t0')
     exit(255)
 try:
-    config.getint('board', 'showThreads')
-    config.getint('board', 'showReplies')
-    config.getint('board', 'showTextLines')
-    config.getint('board', 'prune')
-    config.getint('post', 'throttle')
-    config.getint('board', 'maxAuthorLength')
+    boardconf.getint('board', 'showThreads')
+    boardconf.getint('board', 'showReplies')
+    boardconf.getint('board', 'showTextLines')
+    boardconf.getint('board', 'prune')
+    boardconf.getint('board', 'throttle')
+    config.getint('server', 'maxAuthorLength')
 except ValueError:
-    print('3*** configuration error: board.{showThreads, showReplies, showTextLines, prune, maxAuthorLength} and post.throttle must be integers ***\tfake\t(NULL)\t0')
+    print('3*** configuration error: board.{showThreads, showReplies, showTextLines, prune, maxAuthorLength, throttle} and server.maxAuthorLength must be integers ***\tfake\t(NULL)\t0')
     exit(255)
 
 if __name__ == '__main__' and 'REQUEST' not in environ:
