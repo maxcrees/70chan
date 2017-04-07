@@ -62,6 +62,7 @@ def showLinkTxt(board, id, author, date):
 
 def showText(text, truncate=0):
     textRows = textwrap(text)
+    textRows = [re.sub(r' ?<!< ?', '\n\n', row) for row in textRows]
 
     count = 0
     for textRow in textRows:
@@ -72,7 +73,17 @@ def showText(text, truncate=0):
         elif textRow == "":
             write('  ')
         else:
-            write('  ' + textRow)
+            if '\n\n' in textRow:
+                subLines = textRow.split('\n\n')
+                i = len(subLines)
+                for subLine in subLines:
+                    write('  ' + subLine)
+                    if i > 1:
+                        write('  ')
+
+                    i -= 1
+            else:
+                write('  ' + textRow)
 
 def showThread(cursor, board, thread, replyLimit=0, truncate=0):
     if thread['replies'] == 1:

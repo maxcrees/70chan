@@ -140,6 +140,7 @@ def newPost(db, cursor, board, thread, ip, text):
         imagename = ''
 
     # Text-wrapping
+    text = re.sub(r'( *<!< *)* *<< *( *<!< *)*', '\n', text)
     text = '\n'.join(textwrap(text))
 
     if type(thread) == int:

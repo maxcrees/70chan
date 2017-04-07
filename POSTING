@@ -19,6 +19,10 @@ your name.
 
 Your password can be changed at a later time at 1/changepw.
 
+---------- Paragraphing ------------
+Use << to start a new line, and <!< to start a new paragraph. The << operator
+will consume directly adjacent <!< operators.
+
 ---------- Images ------------------
 You can start your post (after your "!Name" if you include one) with a URL
 (starting with "http" or "https") to an image < 1 MiB in order to upload it.
