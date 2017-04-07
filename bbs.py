@@ -42,6 +42,7 @@ def notice(tag):
 def userError(tag):
     """Use when user tries to perform an invalid action or gives invalid input"""
     write('!!! ' + tag + ' !!!', ftype='3', selector='fake', host='(NULL)', port=0)
+    write('Return to BBS home', config['path']['board'], '1')
     exit(1)
 
 def critError(tag):

@@ -16,28 +16,40 @@ def secHash(text):
     return crypt(text, METHOD_SHA512)
 
 def checkPasswd(name, plainPW):
-    passwd = loadPasswd()
+    passwd, email = loadPasswd()
     nameExists(passwd, name)
 
+    if passwd[name] == 'REVOKED':
+        userError('This name is banned')
+
     hash = crypt(plainPW, passwd[name])
+    # XXX
+    if not hash:
+        from bcrypt import hashpw as crypt_blowfish
+        hash = crypt_blowfish(plainPW.encode('utf-8'), passwd[name].encode('utf-8'))
+        hash = hash.decode('utf-8')
+
     if not compare_hash(passwd[name], hash):
         userError('Password does not match')
 
 def loadPasswd():
     passwd = {}
+    email = {}
     with open('data/passwd') as f:
         for line in f:
             line = line.strip().split(':')
             passwd[line[0]] = line[1]
+            email[line[0]] = line[2]
 
-    return passwd
+    return passwd, email
 
 def register(passwd, name, pw):
     hash = secHash(pw)
     with open('data/passwd', 'a') as f:
-        f.write(name + ':' + hash + '\n')
+        f.write(name + ':' + hash + ':gopher@bbs.sick.bike\n')
 
     write('Registered name "{}"'.format(name), ftype='3')
+    write('Return to BBS home', config['path']['board'], '1')
 
 def nameCheck(name, names):
     validName = r'^[A-Za-z0-9_-]+$'
@@ -54,7 +66,7 @@ def nameCheck(name, names):
 
 if __name__ == '__main__':
     getBBSlock()
-    passwd = loadPasswd()
+    passwd, email = loadPasswd()
     names = [name.lower() for name in passwd.keys()]
 
     pattern = re.escape(config['path']['register'][1:]) + r'(.*)/?'

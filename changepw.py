@@ -7,18 +7,19 @@ from bbs import *
 from config import *
 from register import *
 
-def changePasswd(passwd, changingName, newpw):
+def changePasswd(passwd, email, changingName, newpw):
     passwd[changingName] = secHash(newpw)
 
     with open('data/passwd', 'w') as f:
         for name in passwd.keys():
-            f.write(name + ':' + passwd[name] + '\n')
+            f.write('{}:{}:{}\n'.format(name, passwd[name], email[name]))
 
     write('Successfully changed password for "{}"'.format(changingName), ftype='3')
+    write('Return to BBS home', config['path']['board'], '1')
 
 if __name__ == '__main__':
     getBBSlock()
-    passwd = loadPasswd()
+    passwd, email = loadPasswd()
 
     pattern = re.escape(config['path']['changepw'][1:]) + r'(.*)/?'
     queryfinder = re.compile(pattern)
@@ -57,4 +58,4 @@ if __name__ == '__main__':
         oldpw = search[0]
         checkPasswd(name, oldpw)
         newpw = search[1]
-        changePasswd(passwd, name, newpw)
+        changePasswd(passwd, email, name, newpw)
