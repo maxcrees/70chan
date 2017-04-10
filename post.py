@@ -148,19 +148,25 @@ def newPost(db, cursor, board, thread, ip, text):
     else:
         threadID = thread['id']
 
-    if threadID == 0:
-        tword = getNewThreadWord(cursor, board)
-        cursor.execute("""
-INSERT INTO posts (board, thread, tdate, tword, id, author, ip, text, imagename, imageext)
-VALUES (?, 0, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?)
-        """, (board, tword, id, author, ip, text, imagename, imageext))
-    else:
-        cursor.execute("""
-INSERT INTO posts (board, thread, id, author, ip, text, imagename, imageext)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (board, threadID, id, author, ip, text, imagename, imageext))
+    try:
+        if threadID == 0:
+            tword = getNewThreadWord(cursor, board)
+            cursor.execute("""
+    INSERT INTO posts (board, thread, tdate, tword, id, author, ip, text, imagename, imageext)
+    VALUES (?, 0, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?)
+            """, (board, tword, id, author, ip, text, imagename, imageext))
+        else:
+            cursor.execute("""
+    INSERT INTO posts (board, thread, id, author, ip, text, imagename, imageext)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (board, threadID, id, author, ip, text, imagename, imageext))
 
-    db.commit()
+        db.commit()
+    except IntegrityError as err:
+        if err.args[0] == 'That post already exists!':
+            critError('Someone just posted at the exact same time as you. Reload to try posting again.')
+        else:
+            critError('Unknown DB error: "{}"'.format(err.args[0]))
 
     # Check if successful
     if threadID == 0:
