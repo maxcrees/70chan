@@ -4,6 +4,8 @@ import re
 import sqlite3
 from sys import exit, argv
 from textwrap import wrap as _textwrap
+from pathlib import Path
+from datetime import datetime
 
 from config import *
 
@@ -104,8 +106,13 @@ WHERE name = ?""", (board,))
 
 def getBBSlock():
     """Check if the lockfile exists raise error if it does"""
-    if isfile(config['file']['lock']):
-        critError('BBS is currently offline')
+    lock = Path(config['file']['lock'])
+    if lock.is_file():
+        when = datetime.utcfromtimestamp(lock.stat().st_mtime)
+        when = when.strftime('%c UTC')
+        reason = lock.read_text().strip() or '(no reason given)'
+        write(f'*** BBS is currently offline since {when}:***', ftype='3')
+        critError(reason)
 
 def getThreadLink(board, thread):
     """Get selector to given thread object with respect to preference between ID and thread words"""

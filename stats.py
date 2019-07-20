@@ -31,6 +31,5 @@ if __name__ == '__main__':
               board['threads'], pluralThread))
         write('  last post on: {} UTC'.format(board['ts']))
 
-    if isfile(config['file']['lock']):
-        write('')
-        write('*** BBS is currently offline ***', ftype='3')
+    write('')
+    getBBSlock()
